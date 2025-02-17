@@ -1,0 +1,8 @@
+{
+  "globals": {
+    "app": true,
+    "ModelService": true,
+    "TransactionService": true,
+    "ErrorService": true
+  }
+}

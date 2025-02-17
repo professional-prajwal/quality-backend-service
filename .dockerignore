@@ -1,0 +1,117 @@
+# Docker specific
+# ---------------
+.git
+.ebextensions
+
+# Project specific ignores
+# ------------------------
+# This section contains all ignores that are specific to this project.
+
+# - internal build / archive
+/out/
+
+# - grunt and sails
+.tmp
+/config/local.js
+
+# - node components must be allowed for fat-archive
+# node_modules
+# bower_components
+
+# - npm
+lib-cov
+*.seed
+*.log
+*.out
+*.pid
+npm-debug.log
+.node_history
+
+# - coverage
+/.coverage/
+
+
+# JetBrains
+# ---------
+# Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm
+
+*.iml
+
+# - Directory-based project format:
+.idea/
+
+# - File-based project format:
+*.ipr
+*.iws
+
+## JetBrains Plugin-specific files
+## -------------------------------
+
+# - IntelliJ
+out/
+
+# - mpeltonen/sbt-idea plugin
+.idea_modules/
+
+# - JIRA plugin
+atlassian-ide-plugin.xml
+
+# - Crashlytics plugin (for Android Studio and IntelliJ)
+com_crashlytics_export_strings.xml
+crashlytics.properties
+crashlytics-build.properties
+
+
+# SublimeText
+# -----------
+
+# - cache files for sublime text
+*.tmlanguage.cache
+*.tmPreferences.cache
+*.stTheme.cache
+
+# - workspace files are user-specific
+*.sublime-workspace
+
+# - sftp configuration file
+sftp-config.json
+
+# Netbeans
+# --------
+
+.netbeans
+nbproject
+
+
+# Windows OS
+# ----------
+
+# - Windows image file caches
+Thumbs.db
+ehthumbs.db
+
+# - Folder config file
+Desktop.ini
+
+# - Recycle Bin used on file shares
+$RECYCLE.BIN/
+
+# - Windows Installer files
+*.cab
+*.msi
+*.msm
+*.msp
+
+# - Windows shortcuts
+*.lnk
+
+
+# OSX
+# ---
+
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Icon must end with two \r
+Icon

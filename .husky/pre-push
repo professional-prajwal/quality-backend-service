@@ -1,0 +1,15 @@
+#!/bin/bash
+source "$(dirname "$0")/_/husky.sh";
+
+BRANCH_NAME=`git branch --show-current`;
+
+# "git push"es happen in many contexts, this hook should only care about local feature branches being pushed for P.Rs
+if ! [[ ${BRANCH_NAME} =~ ^feature/ ]]; then
+  echo "skipping pre-push hook for non-feature branch: ${BRANCH_NAME}";
+  exit;
+fi
+
+# Run sanity tests
+TESTS=("lint" "system")
+
+for test in ${TESTS[@]}; do npm run test-${test}; done

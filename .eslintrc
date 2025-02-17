@@ -1,0 +1,15 @@
+{
+  "root": true,
+  "globals": {
+    // custom globals
+    "_": true,
+    "async": true,
+    "app": true,
+    "server": true,
+    // models
+    "Health": true,
+    // services
+    "LogService": true
+  },
+  "extends": "postman"
+}

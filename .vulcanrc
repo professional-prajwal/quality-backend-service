@@ -1,0 +1,13 @@
+application:
+  name: qualitybackend
+npm:
+  start: docker
+ecr:
+  url: 432983378316.dkr.ecr.us-east-1.amazonaws.com/service/qualitybackend
+beanstalk:
+  name: pm-qualitybackend
+  loadBalancer:
+    type: ALB
+ebe:
+  alarms:
+    snsTopic: NotifySlackInternalServices

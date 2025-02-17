@@ -1,0 +1,114 @@
+name: Test and Deploy
+on:
+  push
+
+jobs:
+  Install-NPM-Dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+      - run: 'npm config set //registry.npmjs.org/:_authToken=${{ secrets.POSTMAN_NPM_TOKEN }}'
+      - run: 'npm install --force --loglevel error'
+
+  Infra-Lint-Tests:
+    runs-on: ubuntu-latest
+    needs: Install-NPM-Dependencies
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+      - run: 'npm run test-lint'
+
+  System-Tests:
+    runs-on: ubuntu-latest
+    needs: Infra-Lint-Tests
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+      - run: 'npm run test-system'
+
+  Unit-Tests:
+    runs-on: ubuntu-latest
+    needs: Infra-Lint-Tests
+    services:
+      mysql:
+        # MySQL 8 introduced changes to the default authentication plugin.
+        # Instead of using the mysql_native_password plugin as the default, MySQL 8 introduced the caching_sha2_password plugin. 
+        # We can't use the default image since MySQL 8 does not support MYSQL_AUTHENTICATION_PLUGIN
+        image: bitnami/mysql:8.0.26
+        ports:
+          - "3306:3306"
+        env:
+          MYSQL_DATABASE: "qualitybackend_test"
+          ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_AUTHENTICATION_PLUGIN: "mysql_native_password"
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+      - run: 'npm run test-unit'
+  
+  Integration-Test:
+    runs-on: ubuntu-latest
+    needs: Infra-Lint-Tests
+    services:
+      mysql:
+        # MySQL 8 introduced changes to the default authentication plugin.
+        # Instead of using the mysql_native_password plugin as the default, MySQL 8 introduced the caching_sha2_password plugin. 
+        # We can't use the default image since MySQL 8 does not support MYSQL_AUTHENTICATION_PLUGIN
+        image: bitnami/mysql:8.0.26
+        ports:
+          - "3306:3306"
+        env:
+          MYSQL_DATABASE: "qualitybackend_test"
+          ALLOW_EMPTY_PASSWORD: "yes"
+          MYSQL_AUTHENTICATION_PLUGIN: "mysql_native_password"
+        options: --health-cmd "mysqladmin ping" --health-interval 10s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - uses: actions/cache@v3
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-${{ hashFiles('package.json') }}
+      - run: 'npm run test-integration'
+
+  deploy-beta:
+    if: ${{ github.ref_name == 'channel/beta' }} # If the branch is channel/beta, auto deploy to beta
+    needs: [System-Tests, Unit-Tests, Integration-Test]
+    runs-on: ubuntu-latest
+    steps:
+       - run: 'echo "This is where your deploy logic lifes for deploying to beta"' # Replace this with your deploy steps
+
+  deploy-stage:
+    if: ${{ github.ref_name == 'master' }} # If the branch is master, auto deploy to stage and manually deploy to prod 
+    needs: [System-Tests, Unit-Tests, Integration-Test]
+    runs-on: ubuntu-latest
+    steps:
+       - run: 'echo "This is where your deploy logic lifes for deploying to beta"' # Replace this with your deploy steps

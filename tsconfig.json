@@ -1,0 +1,8 @@
+{
+  "extends": "@postman/types/config/node18/tsconfig.json",
+  "include": [
+    "**/*.json",
+    "**/*.js",
+    "**/*.ts"
+  ]
+}
